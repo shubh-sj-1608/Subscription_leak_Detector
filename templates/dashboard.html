@@ -1,0 +1,44 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Subscription Leak Detector</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Subscription Leak Detector</h1>
+      <p class="subtitle">
+        Upload your bank statement and find out what's quietly draining your
+        wallet.
+      </p>
+
+      <div class="upload-box">
+        <input type="file" id="csvFile" accept=".csv" />
+        <button id="uploadBtn">Analyze Statement</button>
+        <p id="statusMsg"></p>
+      </div>
+
+      <div id="resultsSection" class="hidden">
+        <h2>Your Subscriptions</h2>
+        <div id="subscriptionCards"></div>
+      
+        <div id="chartSection" class="hidden">
+        <h3 id="chartTitle"></h3>
+         <canvas id="priceChart" height="100"></canvas>
+      </div>
+
+        <h2>Savings Simulator</h2>
+        <p class="subtitle">
+          Check the subscriptions you'd consider cancelling:
+        </p>
+        <div id="simulatorList"></div>
+        <p id="totalSavings" class="savings-total"></p>
+      </div>
+    </div>
+
+    <script src="{% static 'js/app.js' %}"></script>
+  </body>
+</html>
