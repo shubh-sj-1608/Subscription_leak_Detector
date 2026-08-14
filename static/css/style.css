@@ -138,3 +138,42 @@ input[type="text"], input[type="password"] {
     font-size: 13px;
     text-decoration: none;
 }
+
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff55;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    body { padding: 20px 12px; }
+    h1 { font-size: 24px; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 4px; }
+
+    .upload-box { padding: 16px; }
+    #csvFile { display: block; margin-bottom: 12px; width: 100%; }
+    #uploadBtn { width: 100%; }
+
+    .sub-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .card-actions { flex-wrap: wrap; }
+}

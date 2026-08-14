@@ -145,10 +145,22 @@ uploadBtn.addEventListener('click', async () => {
     const file = fileInput.files[0];
     if (!file) {
         statusMsg.textContent = 'Please choose a CSV file first.';
+        statusMsg.style.color = '#E24A3B';
         return;
     }
 
-    statusMsg.textContent = 'Analyzing...';
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+        statusMsg.textContent = 'Please upload a .csv file — other formats aren\'t supported yet.';
+        statusMsg.style.color = '#E24A3B';
+        return;
+    }
+
+    uploadBtn.disabled = true;
+    const originalText = uploadBtn.textContent;
+    uploadBtn.innerHTML = '<span class="spinner"></span>Analyzing...';
+    statusMsg.style.color = '#5A6472';
+    statusMsg.textContent = 'Reading your statement and detecting subscriptions...';
+
     const formData = new FormData();
     formData.append('file', file);
 
@@ -158,16 +170,46 @@ uploadBtn.addEventListener('click', async () => {
             headers: { 'X-CSRFToken': window.CSRF_TOKEN },
             body: formData,
         });
+
         if (!response.ok) {
-            const err = await response.json();
-            statusMsg.textContent = 'Error: ' + (err.error || 'something went wrong');
+            let message = 'Something went wrong while analyzing your file.';
+            try {
+                const err = await response.json();
+                if (err.error) message = err.error;
+            } catch (_) {}
+
+            if (response.status === 403) {
+                message = 'Your session expired — please log in again.';
+            } else if (response.status === 400) {
+                message = message.includes('CSV')
+                    ? message
+                    : 'That file couldn\'t be read. Make sure it has "date", "raw_merchant_text", and "amount" columns.';
+            } else if (response.status >= 500) {
+                message = 'Server error — please try again in a moment.';
+            }
+
+            statusMsg.textContent = message;
+            statusMsg.style.color = '#E24A3B';
             return;
         }
 
         const data = await response.json();
-        statusMsg.textContent = `Found ${data.subscriptions.length} subscriptions.`;
+
+        if (data.subscriptions.length === 0) {
+            statusMsg.textContent = 'No recurring subscriptions were detected in this statement.';
+            statusMsg.style.color = '#5A6472';
+            resultsSection.classList.add('hidden');
+            return;
+        }
+
+        statusMsg.textContent = `Found ${data.subscriptions.length} subscription${data.subscriptions.length > 1 ? 's' : ''}.`;
+        statusMsg.style.color = '#2EC4B6';
         renderResults(data.subscriptions);
     } catch (e) {
-        statusMsg.textContent = 'Error connecting to server.';
+        statusMsg.textContent = 'Could not connect to the server. Please check your connection and try again.';
+        statusMsg.style.color = '#E24A3B';
+    } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = originalText;
     }
 });
