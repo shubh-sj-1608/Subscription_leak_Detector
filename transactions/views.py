@@ -16,9 +16,11 @@ from .models import Transaction
 from subscriptions.models import Subscription, PriceHistory
 
 
+from rest_framework.authentication import SessionAuthentication
+
 class UploadStatementView(APIView):
     parser_classes = [MultiPartParser]
-    authentication_classes = []
+    authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):

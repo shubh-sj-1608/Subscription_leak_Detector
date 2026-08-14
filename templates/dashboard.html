@@ -9,11 +9,11 @@
   </head>
   <body>
     <div class="container">
-      <h1>Subscription Leak Detector</h1>
-      <p class="subtitle">
-        Upload your bank statement and find out what's quietly draining your
-        wallet.
-      </p>
+      <div class="topbar">
+            <h1>Subscription Leak Detector</h1>
+            <span>{{ username }} · <a class="logout-link" href="{% url 'logout' %}">Log out</a></span>
+        </div>
+        <p class="subtitle">Upload your bank statement and find out what's quietly draining your wallet.</p>
 
       <div class="upload-box">
         <input type="file" id="csvFile" accept=".csv" />
@@ -38,7 +38,15 @@
         <p id="totalSavings" class="savings-total"></p>
       </div>
     </div>
-
+ <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        window.CSRF_TOKEN = getCookie('csrftoken');
+    </script>
+    <script src="{% static 'js/app.js' %}"></script>   
     <script src="{% static 'js/app.js' %}"></script>
   </body>
 </html>

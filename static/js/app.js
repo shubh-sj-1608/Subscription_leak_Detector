@@ -107,9 +107,12 @@ async function showPriceChart(subscriptionId, merchantName) {
 
 async function submitFeedback(subscriptionId, feedbackType, buttonEl) {
     try {
-        const response = await fetch(`/api/subscriptions/feedback/${subscriptionId}/`, {
+       const response = await fetch(`/api/subscriptions/feedback/${subscriptionId}/`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': window.CSRF_TOKEN,
+            },
             body: JSON.stringify({ feedback_type: feedbackType }),
         });
         if (response.ok) {
@@ -152,9 +155,9 @@ uploadBtn.addEventListener('click', async () => {
     try {
         const response = await fetch('/api/transactions/upload/', {
             method: 'POST',
+            headers: { 'X-CSRFToken': window.CSRF_TOKEN },
             body: formData,
         });
-
         if (!response.ok) {
             const err = await response.json();
             statusMsg.textContent = 'Error: ' + (err.error || 'something went wrong');
